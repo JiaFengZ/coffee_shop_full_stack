@@ -86,6 +86,7 @@ export class DrinksService {
     const header = {
       headers: new HttpHeaders()
         .set('Authorization',  `Bearer ${this.auth.activeJWT()}`)
+        .set('Access-Control-Allow-Origin',  'http://127.0.0.1:5000')
     };
     return header;
   }
