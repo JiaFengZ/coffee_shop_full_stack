@@ -36,10 +36,6 @@ def after_request(response):
 def get_drinks():
   data = Drink.query.order_by(Drink.id).all()
   drinks = [item.short() for item in data]
-  total = len(drinks)
-
-  if total == 0:
-    abort(404)
 
   return jsonify({
     'success': True,
@@ -55,13 +51,10 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks-detail', methods=['GET'])
-def get_drinks_detail():
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(jwt):
   data = Drink.query.order_by(Drink.id).all()
   drinks = [item.long() for item in data]
-  total = len(drinks)
-
-  if total == 0:
-    abort(404)
 
   return jsonify({
     'success': True,
@@ -78,7 +71,8 @@ def get_drinks_detail():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks', methods=['POST'])
-def create_drink():
+@requires_auth('post:drinks')
+def create_drink(jwt):
   body = request.json
 
   new_title = body['title']
@@ -114,7 +108,8 @@ def create_drink():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
-def edit_drink(id):
+@requires_auth('patch:drinks')
+def edit_drink(jwt, id):
   try:
     drink = Drink.query.get(id)
     if drink is None:
@@ -145,7 +140,8 @@ def edit_drink(id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-def delete_drink(id):
+@requires_auth('delete:drinks')
+def delete_drink(jwt, id):
   try:
     drink = Drink.query.get(id)
 
